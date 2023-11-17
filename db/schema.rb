@@ -10,22 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_16_181253) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_17_180522) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "bookmarks", force: :cascade do |t|
-    t.string "comment"
+    t.text "comment"
+    t.bigint "movie_id", null: false
+    t.bigint "list_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["list_id"], name: "index_bookmarks_on_list_id"
+    t.index ["movie_id"], name: "index_bookmarks_on_movie_id"
   end
 
   create_table "lists", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "bookmark_id", null: false
-    t.index ["bookmark_id"], name: "index_lists_on_bookmark_id"
   end
 
   create_table "movies", force: :cascade do |t|
@@ -35,10 +37,8 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_16_181253) do
     t.integer "rating"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "bookmark_id", null: false
-    t.index ["bookmark_id"], name: "index_movies_on_bookmark_id"
   end
 
-  add_foreign_key "lists", "bookmarks"
-  add_foreign_key "movies", "bookmarks"
+  add_foreign_key "bookmarks", "lists"
+  add_foreign_key "bookmarks", "movies"
 end
